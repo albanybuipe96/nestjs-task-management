@@ -18,7 +18,6 @@ export class TasksService {
 
     async getTasks(req): Promise<Task[]> {
         const user = req.user
-        this.logger.error(`Authenticated user not reached.`)
         return this.taskRepository.find({ userId: user._id })
     }
 
@@ -40,9 +39,9 @@ export class TasksService {
 
     async deleteTask(id: string, req): Promise<void> {
         const user = req.user
-        const userId = user._id
-        await this.taskRepository.delete({ id, userId })
+        await this.taskRepository.delete(id)
             .catch(err => {
+                this.logger.error(`${err}`, err.trace)
                 throw new NotFoundException(`[TasksService.deleteTask] Task with ID ${id} not found`)
             })
     }
